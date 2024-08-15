@@ -3,28 +3,40 @@ import PropTypes from 'prop-types';
 import styles from './Form.module.css';
 
 const Form = ({ setFormData, setError }) => {
-  const [name, setName] = useState('');
-  const [color, setColor] = useState('');
-  const [meaning, setMeaning] = useState('');
+  const [formState, setFormState] = useState({
+    name: '',
+    color: '',
+    meaning: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const resetForm = () => {
-    setName('');
-    setColor('');
-    setMeaning('');
+    setFormState({
+      name: '',
+      color: '',
+      meaning: ''
+    });
   };
 
   const validateForm = () => {
-    if (name.trim().length < 3 || name.startsWith(' ')) {
+    if (formState.name.trim().length < 3 || formState.name.startsWith(' ')) {
       setError('Por favor chequea que la información sea correcta.');
       return false;
     }
 
-    if (!/^#[0-9A-F]{6}$/i.test(color)) {
+    if (!/^#[0-9A-F]{6}$/i.test(formState.color)) {
       setError('Por favor ingresa un color válido en formato HEX (#FFF000)');
       return false;
     }
     
-    if (meaning.length < 6) {
+    if (formState.meaning.length < 6) {
       setError('Por favor chequea que la información sea correcta.');
       return false;
     }
@@ -37,13 +49,8 @@ const Form = ({ setFormData, setError }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validations
     if (validateForm()) {
-      setFormData({
-        name,
-        color,
-        meaning
-      });
+      setFormData(formState);
       resetForm();
     }
   };
@@ -52,22 +59,25 @@ const Form = ({ setFormData, setError }) => {
     <form onSubmit={handleSubmit} className={styles.form}>
       <input
         type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        name="name"
+        value={formState.name}
+        onChange={handleInputChange}
         placeholder="Ingresa tu nombre"
         className={styles.input}
       />
       <input
         type="text"
-        value={color}
-        onChange={(e) => setColor(e.target.value)}
+        name="color"
+        value={formState.color}
+        onChange={handleInputChange}
         placeholder="Tu color favorito favorito (formato HEX)"
         className={styles.input}
       />
       <input
         type="text"
-        value={meaning}
-        onChange={(e) => setMeaning(e.target.value)}
+        name="meaning"
+        value={formState.meaning}
+        onChange={handleInputChange}
         placeholder="¿Qué significa ese color para ti?"
         className={styles.input}
       />
